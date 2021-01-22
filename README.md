@@ -40,7 +40,7 @@ Before 2000: 2 Hardwares --> 2 different OS's -->  2 different apps
 
 16) Docker engine is a software which has a server-client architecture and running on Unix or Windows
 
-17) Docker engine has 3 components: Docker daemon(docker server), docker rest api, docker CLI. These are separate components from each other.
+17) Docker engine has 3 components: Docker daemon(docker server), docker rest api, docker CLI. These are separate components from each other. Docker CLI is communicating with docker daemon via docker rest api.
 
 18) Docker deamon is creating and managing docker networks, docker containers, docker images and data volumes.
 
@@ -62,7 +62,7 @@ Before 2000: 2 Hardwares --> 2 different OS's -->  2 different apps
 
 3) We are only using Docker Engine Community Edition. If we installed docker community on linux machine, docker daemon and docker CLI got installed.
 
-4) If we were installing Docker on Windows, it is creating a virtual machine using hyper v in the background to run docker.
+4) If we were installing Docker on Windows or Mac, it is creating a virtual machine using hyper v in the background to run docker.
 
 5) We only need to install docker ce to run docker.
 
@@ -91,6 +91,180 @@ sudo docker run hello-world
 ```
 sudo docker version
 ```
+
+13) Docker CLI can be thought as Terminal. Docker daemon is the main application to run docker. Docker CLI and docker daemon are different because we can manage a remote docker daemon via our docker CLI.
+
+14) To obtain base info about docker in the system
+
+```
+docker info
+```
+
+15) To see all cossible docker commands
+
+```
+docker
+```
+
+16) Till 2017, docker's CLI was basic. Then, it became more complex to do more jobs. The first command is before 2017, the latter command is after 2017. These 2 commands are the same.
+
+```
+docker run hello-world
+```
+
+```
+docker container run hello-world
+```
+
+18) The new version has this pattern: ``` docker MANAGEMENT_COMMAND COMMAND_TO_USE ```
+
+19) Use --help command to get help.
+
+20) To create a container
+
+```
+docker container create --name ikincicontainer ozgurozturknet/adanzyedocker
+```
+
+21) To start a created container
+
+```
+docker container start container_name
+```
+
+22) To create and start a container together from an image()
+
+```
+docker container run --name container_name image_name
+
+# Creating a container named ilkcontainer from an image called ozgurozturknet/app1
+docker container run --name ilkcontainer ozgurozturknet/app1
+
+```
+
+23) Default image registry of Docker is docker hub.
+
+24)  To see all containers in the system(running or non-running):
+
+```
+docker container ls -a
+```
+
+25)  To see running containers in the system only:
+
+```
+docker container ls
+```
+
+```
+docker ps
+```
+
+26) Each container has a default app in itself. The container stops when its app in itself stops running.
+
+27) Many applications can be in one image.
+
+28) An image can have many apps but a container starts only one app but then many apps can run in the container.
+
+29) To see logs of a container with its container id
+
+```
+docker container logs 12_digit_container_id
+```
+
+30) While creating a container, if we don't specify a name to it, docker assigns a random name to container.
+
+31) To run a specific app in a docker container
+
+```
+docker container run --name denemecontainer ozgurozturknet/adanzyedocker java app1
+```
+
+32) To stop a running container
+
+```
+docker container stop 12_digit_container_id
+```
+
+33) To run a container in the background(thanks to -d), detach mode
+
+```
+docker container run -d -p 80:80 ozgurozturknet/adanzyedocker
+```
+
+34) It is impossible to delete a running container. To delete an existing container from the system
+
+```
+docker container rm 12_digit_container_id
+```
+
+```
+# To delete all containers in the system
+docker container prune
+```
+
+35) Most of the images have shell. Owing to the fact that they have shell, we are able to connect to the container created from that image. To connect an container running, we are using ```docker exec``` command. sh means connecting to shell of container having alpine OS. If it was ubuntu, we should write bash. it in the below command means interactive and tty. After connecting to the container, we are able to do whatever we want like a random linux machine.
+
+```
+docker container exec -it container_name_we_use sh
+```
+
+36) If a container is running, its PID numbered as 1 should also be running.
+
+37) Docker uses union file system(UFS). Docker images is on top of a base image. Docker image is composed of these layers: a linux OS without kernel(layer 1), app-related things(layer2, layer3, layer 4 etc), an executeble command layer to run which app in the beginning(layer last). Thanks to UFS, we are able to see all of the layers as a single component. UFS brings us advantages of speed and low disk usage.
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/01_what_is_image.png)
+
+39) Docker image is read only (R/O). R/W is a layer that containers have. It is different for each container. Each change made in a container is on the R & W layer.
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/02_R_0_R_W.png)
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/03_layer1_2.png)
+
+
+40) To pull an image from docker hub
+
+```
+docker image pull alpine
+
+docker image pull ozgurozturknet/hello-app
+```
+
+41) Containers are created to run only an app. When a problem appears out, we shouldn't solve the problem by connecting the problem; we should stop former container and create a new one. If the problem is about image, the problem is resolved in the phase of creating image and new container is created from new image.
+
+42) Docker volume is a docker object like docker image and docker container.
+
+43) To create a docker volume and get basic info about that volume, use the followings. Mountpoint is important.
+
+```
+docker volume create VOLUME_NAME
+```
+
+```
+docker volume inspect ilkvolume
+```
+
+44) To create a docker linked to a volume
+
+```
+docker container run -it -v VOLUME_NAME:FOLDER_DIRECTORY_IN_CONTAINER alpine sh
+
+#read only
+docker container run -it -v VOLUME_NAME:/deneme:ro centos sh
+```
+
+
+45) Thanks to docker volumes, we are able to access our data withut depending on docker containers. One volume can be linked to many containers and we can make multiple operations simoultaneously.
+
+46) We can mount volumes into existent and non-existent directories in a container.
+
+- If container directory is empty; content of volume was copied into container directory
+
+- If volume is empty & container directory has some files, content of container directory was copied into volume.
+
+- If volume isn't empty independent on content container directory, content of volume was copied into container directory.
+
+47)
 
 
 
