@@ -116,7 +116,7 @@ docker run hello-world
 docker container run hello-world
 ```
 
-18) The new version has this pattern: ``` docker MANAGEMENT_COMMAND COMMAND_TO_USE ```
+18) The new docker commands after 2017 has this pattern: ``` docker MANAGEMENT_COMMAND COMMAND_TO_USE ```
 
 19) Use --help command to get help.
 
@@ -222,7 +222,7 @@ docker container exec -it container_name_we_use sh
 ![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/03_layer1_2.png)
 
 
-40) To pull an image from docker hub
+40) An image has a pattern of REPOSITORY_NAME:TAG (nginx:latest, httpd:alpine, ozgurozturknet/app1:latest). TAG is latest by default. To pull an image from docker hub
 
 ```
 docker image pull alpine
@@ -264,7 +264,113 @@ docker container run -it -v VOLUME_NAME:/deneme:ro centos sh
 
 - If volume isn't empty independent on content container directory, content of volume was copied into container directory.
 
-47)
+
+#### Bind Mounts
+
+47) The only thing to store data in the production environment is docker volume but we can use bind mounts to store data in development and test environments.
+
+48) Bind mount: To mount a directory (for instance /etc/bin) to a docker container
+
+49)For windows, open settings > resources > file sharing > select folder to give access to activate bind mounts feature.
+
+50) We can make some operations on GUI on windows and mac.
+
+51) To create a docker container from an image of NGINX. Then connect to the container via ```docker exec```. Direct to the folder of **/usr/share/nginx/html**
+
+```
+docker container run -d -p 80:80 --name ilkweb nginx
+```
+
+52) To bind mount from a directory into a docker container
+
+```
+docker container run -d -p 80:80 -v /home/muhammed/Desktop/deneme:/usr/share/nginx/html nginx
+```
+
+## Container 102
+
+1) To see plugins of docker
+
+```
+docker info
+```
+
+2) Docker Network Driver: Bridge, Host, Macvlan, None, Overlay to create network objects.
+
+3) Default is Bridge. None uses no network(not able to ping a website). Host enables containers to run like a process in the computer(no network isolation and uses the network infrastracture)
+
+4) To list docker network objects in the system:
+
+```
+docker network ls
+```
+
+5) To list characteristics of a docker network object(returns json alike object.)
+
+```
+docker network inspect bridge
+
+# Or image and container
+docker image inspect bridge
+docker container inspect bridge
+
+```
+
+6) After installing docker engine, docker creates 3 different docker network objects (bridge, host and None.)
+
+7) To close connection and not to close a container, press P + Q
+
+8) 2 containers which are connected to a bridge network can communicate with each other. To test this, create 2 different containers and run ping DESTINATION_CONTAINER_IP .
+
+9) While creating a container, use ``` --net host ``` or ``` --net none ``` use create a none or host network object.
+
+10) Access from a container whose default docker network driver is Bridge follow this way:
+
+Container --> Bridge Network --> Ethernet Card() --> www.a.com
+
+11) Thanks to port publish, we are enabling packets to access from the world to a container(80:80, 443:443 etc). 80 may be TCP or UDP. The default is TCP. The usage is like this ``` -p host_port:container_port ```. We can make tihs operation (port publish) for many ports ``` -p 8080:80 -p 8043:443 ```. For UDP port in container, use ``` --publish 53:53/udp ``` 
+
+16) Container which have the same Bridge network can share information between each other without port publish.
+
+17) There is no DNS in default bridge network. If 2 containers are under an user-defined network, then DNS becomes active and we can run ping command to connect from one to another.
+
+18) To create a user defined bridge network. 
+
+```
+docker network create kopru1
+
+docker network create kopru2 --driver host
+
+docker network create --driver=bridge --subnet=10.10.0.0/16 --ip-range=10.10.10.0/24 --gateway=10.10.10.10 kopru3
+```
+
+19) To create a container which has a user-defined network
+
+```
+docker container run -dit --name websunucu kopru1 ozgurozturknet/adanzyedocker sh
+
+``` 
+
+20) To connect a detached container
+
+```
+docker attach CONTAINER_NAME
+``` 
+
+21) To connect a running container to a user-defined network
+
+```
+# Connect
+docker network connect kopru3 CONTAINER_NAME
+# Disconnect 
+docker network disconnect kopru3 CONTAINER_NAME
+``` 
+
+22) To delete a user-defined network
+
+```
+docker network rm kopru2
+``` 
 
 
 
