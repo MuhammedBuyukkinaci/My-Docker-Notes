@@ -289,6 +289,8 @@ docker container run -d -p 80:80 -v /home/muhammed/Desktop/deneme:/usr/share/ngi
 
 ## Container 102
 
+### Docker Network
+
 1) To see plugins of docker
 
 ```
@@ -371,6 +373,108 @@ docker network disconnect kopru3 CONTAINER_NAME
 ```
 docker network rm kopru2
 ``` 
+
+### Docker Logging
+
+23) App related logs or system logs are under /var/log/ directory in Linux. For Windows, look event viewer. nginx logs are under /var/log/nginx/ .
+
+24) STDIN STDOUT STDERR in a linux machine like this: These are 3 base I/O systems.
+
+![STDIN STDOUT STDERR](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/05_stdin_stdout_stderr.png)
+
+25) To see the logs of a container:
+
+```
+docker logs CONTAINER_NAME
+
+#For a detailed version
+docker logs --details CONTAINER_NAME
+
+# For a time-based version
+docker logs -t CONTAINER_NAME
+
+docker logs --until 2020-04-21T21:36:02:6626Z CONTAINER_NAME
+
+docker logs --since 2020-04-21T21:36:02:6626Z CONTAINER_NAME
+
+# Subsetted rows
+
+docker logs --tail 10 CONTAINER_NAME
+# -f means follow
+docker logs -f CONTAINER_NAME
+
+``` 
+
+26) To see docker log drivers, run the following and look Log line. Default logging driver is json-file.
+
+```
+docker info
+#To create a container from nginx, whose log driver is splunk
+docker container run --log-driver splunk IMAGE_NAME
+
+``` 
+
+28) To see running processes of a specific container
+
+```
+docker top CONTAINER_NAME
+``` 
+
+29) To see disk, ram and cpu usages of all docker containers in a computer
+
+```
+docker stats
+
+docker stats CONTAINER_NAME
+``` 
+
+### Docker Limits
+
+30) To limit memory, CPU of a docker container
+
+```
+# Limiting memory of container
+docker container run -d --memory=100m IMAGE_NAME
+
+# Limiting memory and swap
+docker container run -d --memory=100m --memory-swap=200m IMAGE_NAME
+
+# Limiting cpu( assigning # of threads )
+docker container run -d --cpus="1.5" IMAGE_NAME
+
+# Assigning number 0 and number 3 threads to the container
+docker container run -d --cpuset-cpus="0,3" IMAGE_NAME
+``` 
+
+### Environment Variables
+
+31) Environment variable (EV) is a valid variable which may be called from each part of OS. EV's are case sensitive. To list all EV's in Windows in PowerShell, run ```Get-ChildItem Env:```. To get only one EV, run ```$Env:windir```; replace windir with the name of EV. windir is an EV. To create an EV, ```$Env:test="deneme123"```
+
+32) To list EV's in Linux, run ```env``` command. To see the value of an EV we want to see, run ```echo $NAME_OF_EV``` like ```echo $PATH ```. To create an EV ```export EV_NAME="EV_VALUE" ```
+
+33) EV's are created during creating image or container.
+
+34) To create EV in a container created from an image.
+
+```
+docker container run -it --env EV1=deneme1 --env EV2=deneme2 IMAGE_NAME
+```
+
+35) To transfer the value of an EV in the OS to the container. TEMP is an EV in the OS.
+
+```
+docker container run -it --env TEMP ubuntu bash
+```
+
+41) To transfer multiple EV's from the OS to the container 
+
+```
+docker container run -it --env-file PATH_OF_ENV_LIST/env.list ubuntu bash
+```
+
+42) While connecting to DB in test or prod environmentst, we can benefit from Environment variables of Docker.
+
+
 
 
 
