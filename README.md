@@ -21,11 +21,15 @@ Including My Docker Notes
 
 9) Server has a motherboard which has many CPU's and many RAM's. Then, a lot of hard discs are binded into this motherboard.
 
-10) 
-Before 2000: 2 Hardwares --> 2 different OS's -->  2 different apps
-2000 - 2007: 1 hardware --> 1 virtualization software --> 2 different OS's --> 2 different apps
-	  2007 - 2013 :  Container technology appeared
-	  2013: Docker is available.
+10) The timeline is below
+
+Before 2000: 2 Hardwares, 2 different OS's ,  2 different apps
+
+2000 - 2007: 1 hardware, 1 virtualization software, 2 different OS's, 2 different apps
+
+2007 - 2013 :  Container technology appeared
+
+2013: Docker is available.
 	  
 
 11) We prefer to isolate apps from each other because interaction may result in some problems.
@@ -106,7 +110,7 @@ docker info
 docker
 ```
 
-16) Till 2017, docker's CLI was basic. Then, it became more complex to do more jobs. The first command is before 2017, the latter command is after 2017. These 2 commands are the same.
+16) Till 2017, docker's CLI was basic. Then, it became more complex to do more jobs. The first command is before 2017, the latter command is after 2017. These 2 commands are the same. If --rm flag is used just after ```docker container run```, it means remove the container when the container stops.
 
 ```
 docker run hello-world
@@ -287,6 +291,12 @@ docker container run -d -p 80:80 --name ilkweb nginx
 docker container run -d -p 80:80 -v /home/muhammed/Desktop/deneme:/usr/share/nginx/html nginx
 ```
 
+53) To copy a file from the container to our local computer
+
+```
+docker cp container_name:DIRECTORY_IN_CONTAINER DIRECTORY_OF_LOCAL
+```
+
 ## Container 102
 
 ### Docker Network
@@ -380,7 +390,7 @@ docker network rm kopru2
 
 24) STDIN STDOUT STDERR in a linux machine like this: These are 3 base I/O systems.
 
-![STDIN STDOUT STDERR](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/05_stdin_stdout_stderr.png)
+![STDIN STDOUT STDERR](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/04_stdin_stdout_stderr.png)
 
 25) To see the logs of a container:
 
@@ -473,6 +483,283 @@ docker container run -it --env-file PATH_OF_ENV_LIST/env.list ubuntu bash
 ```
 
 42) While connecting to DB in test or prod environmentst, we can benefit from Environment variables of Docker.
+
+## Image & Registry
+
+### Docker Tagging, Naming and Docker Hub
+
+1) Docker image = Linux OS - Kernel + Our app with libraries
+
+2) Docker image is a packaged form of an app.
+
+3) Image registry is a storage of storing docker images. For example, docker hub & microsoft container registry.
+
+4) Default image registry of docker is docker hub.
+
+5) Docker Image Naming: REGISTRY_URL/REPOSITORY:TAG . For instance,
+an offical repository: docker.io/ubuntu:18.04, docker.io/ozgurozturknet/adanzyedocker:latest
+
+6) Thanks to image tagging, we can have a single repositroy and 2 different tags instead of 2 different repositories. If we don't assign a particular tag name to an image, latest is assigned by default. Latest doesn't mean latest but it acutally means default version.
+
+7) To pull an image from docker hub
+
+```
+docker image pull IMAGE_NAME
+docker image pull ozgurozturknet/adanzyedocker
+docker image pull ozgurozturknet/adanzyedocker:latest
+docker image pull ozgurozturknet/adanzyedocker:v1
+# Pulling from a different image registry service
+docker image pull gcr.io/google-containers/busybox
+```
+
+8) Official images have only one segment in naming. Unoffical images have 2 segments in naming.
+
+9) Offical images are in docker hub. In an image, supported tags and respective dockerfile links are showing us the tags of docker images.
+
+10) Each image has a different id. For different aliases of a same image, they have the same image id. For example, postgresql 13.1, 13, latest are the same.
+
+11) Docker images are created with a docker instruction. This docker instruction is Dockerfile.
+
+12) Official docker hub images have a lot of documentation. This facilitates using.
+
+13) Docker organization may be thought as user group in Linux.
+
+14) To create a docker image, we should first create a DockerFie.
+
+15) The pattern is like this:
+
+```
+COMMAND WHAT_TO_DO
+```
+
+16) ```FROM image:tag``` is an obligatory command which should be located in all Dockerfile's. Example: ```FROM centos:7```
+
+17) ```RUN linux_command``` is running linux commands in the shell.
+
+18) ``` WORKDIR location_to_place ``` is changing directroy. If the location_to_place directory is absent, it is created by default.
+
+20) ```COPY source destination_directory```
+
+21) ```EXPOSE port_number``` defines which ports are going to be used in the containers based on that image. Example ```EXPOSE 80/tcp```.
+
+22) ```CMD linux_command``` is defining which command to run by default when a container was created.
+
+23) HEALTHCHECK is used to check the status of a container. ```curl -f http://localhost/ || exit 1 ``` is the command to chech whether it runs properly or not.
+
+```
+HEALTHCHECK --internal=5m --timeout=3s CM curl -f http://localhost/ || exit 1
+
+HEALTHCHECK --internal=30s --timeout=10s --start-period=5s --retries=3 CMD curl -f http://localhost/ || exit 1
+
+```
+
+24) ```#``` is used to commentize in Dockerfile's.
+
+25) To create an image with tag and docker file:
+
+```
+# -f means file, -t means tag,
+# . means to look for this folder while building up the image
+
+docker image build -t ozgurozturknet/merhaba -f Dockerfile .
+```
+
+26) To see the past and layers of an image
+
+```
+docker image history REPOSITORY_NAME
+
+docker image history ozgurozturknet/merhaba
+```
+
+27) To push an image to docker hub
+
+```
+docker image push ozgurozturknet/merhaba
+```
+
+28) Thanks to docker's layered structure, we are using less data and obtaining bandwidth.
+
+29) It would be better to use an image having python or java rather than building an image with an OS and a programming language. It is safer and quickier.
+
+30) Some image creation commands are below. Projects and docker files in under workspaces/ directory.
+
+```
+#01_java
+docker image build -t ozgurozturknet/merhaba -f Dockerfile .
+docker container run ozgurozturknet/merhaba
+
+#02_python
+docker image build -t ozgurozturknet/py .
+docker container run --rm -p 80:5000 ozgurozturknet/py
+
+#03_node
+docker image build -t ozgurozturknet/node .
+docker container run -d -p 80:8080 ozgurozturknet/node
+
+#04_hello_docker
+docker image build -t ozgurozturknet/hello-docker .
+docker container run -d --name hellodocker -p 80:80 ozgurozturknet/hello-docker
+
+#06_entrypoint_cmd_diff
+docker image build -t javaimaj .
+docker container run javaimaj
+docker container run javaimaj ls
+
+```
+
+31) The order in Dockerfile is important. The commands which are most likely to be changed should be placed in bottom lines of Dockerfile in order to use cache characteristic of Docker more.
+
+32)  We are using LABEL command that we want to store in image metadata in Dockerfile.
+
+```
+#In a Dockerfile
+
+LABEL maintainer="Muhammed Buyukkinaci"
+LABEL version="1.0"
+LABEL name="hello docker"
+
+```
+
+33) To create an Environment variable in a Dockerfile
+
+```
+ENV KULLANICI="MuhammedBuyukkinaci"
+```
+
+34) Write in one line in a Dockerfile if possible. For example,
+
+```
+#In a Dockerfile
+
+LABEL maintainer="Muhammed Buyukkinaci" version="1.0" name="hello-docker" 
+
+```
+
+35) && is used in Dockerfile to run commands respectively in a single line to have fewer layers. \ is used to read better in Dockerfile.
+
+36) While creating a container from an image, we can define a new EV or reassign a value to a pre-defined EV.
+
+37) To get info about image
+
+```
+docker image inspect IMAGE_NAME
+```
+
+38) The environments of a base image(line of FROM) passes from the base image to the child image. The only exception is to specifically define an ENV.
+
+### Differences
+
+39) The difference between COPY and ADD is here. COPY just copies the file. ADD unzips a zipped file while copying. ADD is also capable of getting data from a remote server without unzipping.
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/05_ADD_COPY_DIFF.png)
+
+40) If we don't specify an app while creating the container, the line in CMD will run. ENTRYPOINT is the same as CMD. The only difference is that ENTRYPOINT can't be changed with ```docker run``` command. In every Dockerfile, there must be either a CMD or ENTRYPOINT. If both CMD and ENTRYPONT exist in a Dockerfile, Docker adds content of CMD to ENTRYPOINT as a parameter. The purpose of using CMD and ENTRYPOINT together is to facilitate versioning problems.
+
+41) Exec form is the former. Shell form is the latter. Exec form means run the content as it is but Shell form means open up a shell and run the content. If we are using CMD and ENTRYPOINT together, we couldn't use Shell form. Thus, we have to use Exec form.
+
+```
+#Exec form
+CMD ["java","app1"]
+#Shell form
+CMD java app1
+
+```
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/06_exec_shell.png)
+
+### MultiStage Build
+
+42) MultiStage is a property of Docker, enabling us to transfer files from the previous image to the next image. The purpose of first image is to just create files which can be used in the next image. The content of first images aren't covered in the next image. A multi stage Dockerfile is below:
+
+```
+# Dockerfile
+# 1st stage
+FROM mcr.microsoft.com/java/jdk:8-zulu-alpine AS derleyici
+COPY /source /usr/src/uygulama
+WORKDIR /usr/src/uygulama
+RUN javac uygulama.java
+# 2nd stage
+FROM mcr.microsoft.com/java/jre:8-zulu-alpine
+WORKDIR /uygulama
+COPY --from=derleyici /usr/src/uygulama .
+CMD ["java","uygulama"]
+```
+
+```
+# To build an image
+docker image build -t javason .
+```
+
+43) --from isn't special to multi stage build. Its use may be like this ```COPY --from=nginx:latest /usr/src/uygulama .``` . This means docker hub's nginx latest's image's /usr/src/uygulama is copied to the image that we are creating by our Dockerfile.
+
+44) BUILD is a property of Dockerfile. The following 2 Dockerfiles are the same. To use ARG in Dockerfile, ```docker image build -t x1 --build-arg VERSION=3.8.1 .``` . ARG is useful if we want to use 2 versions of a same program and their URL have the same pattern. ARG can be thought as variable. ARG isn't EV thus ARG can't be accessed from the container. ARG is widely used in CI/CD to automatize our job and not widely used in our daily jobs.
+
+```
+FROM ubuntu:latest
+WORKDIR /gecici
+ADD https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz .
+CMD ls -al
+```
+
+```
+FROM ubuntu:latest
+WORKDIR /gecici
+ARG VERSION
+ADD https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz .
+CMD ls -al
+```
+
+```
+FROM ubuntu:latest
+WORKDIR /gecici
+#Default is valid if not specified.
+ARG VERSION=3.7.1
+ADD https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz .
+CMD ls -al
+```
+
+45) There are other ways to create an image. Like, create a container, make changes to it and create an image from the container using ```docker commit```.
+This is a way to create in image. Most of the time, we are using Dockerfile way.
+
+```
+docker commit CONTAINER_NAME IMAGE_TAG_NAME
+#We can use expose and CMD features of Dockerfile.
+# -c means run CMD line of Dockerfile
+docker commit -c 'CMD ["java","app1"]' con1 ozgurozturknet/con1:latest
+```
+
+46) Some production environments are close to the internet. We can save an image in our system as a tar file. Then, we copy this tar file to prod environment. Then load it.
+
+```
+docker save IMAGE_NAME -o name_of_tarfile.tar
+docker save ozgurozturknet/con1:latest -o con1image.tar
+# Then copy tar file to prod environment
+docker load -i ./name_of_tarfile.tar
+```
+
+47) Dockerhub isn't the only docker image storage. Azure, GCP, AWS are also available. To create a local image registry on LAN, docker hub --> search registry --> pull official registry image to your computer --> create a container from pulled image --> expose 5000 port of new container --> access this container from your working directory. 
+
+48) ```docker container run --restart OPTION_TO_USE``` means what to do when container stops. OPTION_TO_USE may be [always, no, on-failure, unless-stopped].
+
+49) The tag name determines where to locate in Dockerhub. To add a tag to an image in our local system
+
+```
+# retagging
+docker image tag ozgurozturknet/hello-app:latest 127.0.0.1:5000/hello-app:latest
+# push retagged image to local registry
+docker image push 127.0.0.1:5000/hello-app:latest
+```
+
+50) To list images in LAN, open up a browser and enter the url 127.0.0.1:5000/v2/_catalog
+
+
+
+
+
+
+
+
+
 
 
 
