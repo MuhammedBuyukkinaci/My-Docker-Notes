@@ -752,6 +752,335 @@ docker image push 127.0.0.1:5000/hello-app:latest
 
 50) To list images in LAN, open up a browser and enter the url 127.0.0.1:5000/v2/_catalog
 
+## Compose & Swarm
+
+### Docker Compose
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/07_docker_compose.png)
+
+
+1) Docker compose can be regarded as skeleton of Docker.
+
+2) In real life cases, one application has many services and many containers needed to run a single application. For docker compose, service=container
+
+3) Docker compose is a tool to define and run multiple Docker objects. To use Docker Compose, a YAML file is used and all services were created using one command. Docker compose creates services(containers), networks and volumes.
+
+4) Docker compose is used in development phase and not used in moving to the production.
+
+5) Docker compose isn't coming with docker engine but it comes with docker desktop in Windows an Mac OS but it is required to install it in Linux
+
+6) To use docker compose, Docker-compose.yaml or Docker-compose.yml or docker-compose.yaml or docker-compose.yml files should be created.
+
+7) Use these commands to run and stop respectively
+
+```
+# Up
+docker-compose up
+# Detacked up
+docker-compose up -d
+# Down, opposite of down
+docker-compose down
+```
+
+8) Docker compose componenets: CLI & yaml file.
+
+#### Docker CLI
+
+9) Naming procedure of Docker CLI is FOLDERNAME_SERVICENAME
+
+10) Ctrl + C stops the services and networks but ```docker-compose down``` is stopping and removing.
+
+11) Some of Other docker compose commands are here
+
+```
+# The order of execution
+docker-compose config
+# Lists names of images
+docker-compose images
+# Prints all logs together
+docker-compose logs
+# Runs command in the service created by docker-compose
+docker-compose exec SERVICENAME COMMAND_TO_RUN
+docker-compose exec websrv ls -al
+```
+
+12) ```Docker-compose down``` doesn't remove volumes & images. It removes networks & Services.
+
+### Docker YAML
+
+13) YAMLS uses key-value pairs. Each YAML should start with version line. This version line means docker-compose version, not the version of YAML file. Look at workspaces/09_create_our_yaml folder
+
+14) 4 Top level data blocks in YAML file: version, services, volumes, networks, secrets
+
+15) depends_on: is used in creating a YAML file. DB should start firstly and app should start later.
+
+16)  First network --> Second volume --> Third Services executed in YAML
+
+### Docker Compose Build
+
+17) Most people don't use docker compose build but it was used in Test environments. Docker Compose Build means to create Docker image in YAML file using Dockerfile. Look at workspaces/10_docker_compose_build
+
+18) Replace line starting with image to ```build .```
+
+19) If we change anything on our image after docker-compose up, we should run these 2 commands
+
+```
+# update image
+docker-compose build
+# Re-run compose 
+docker-compose up -d
+```
+
+### Container Orchestration
+
+20) This concept is used to monitor hundreds of containers in prod environment.
+
+21) Container orchestration tools: Docker Swarm, Apache MESOS, Redhat Openshift, Kubernetes. Kubernetes is industry-standard for containers. Kubernetes is open source and triggered by Google. Kubernetes is relatively complex. Docker swarm is mostly used after Kubernetes. Docker Swarm is embedded into Docker Engine and it is easier to use than Kubernetes. Kubernetes is more useful for complex systems.
+
+22) Docker was firstly a runtime environment. Then,
+
+23) To use Docker Swarm, servers should be connected to each other in a fast way. This communication should be in miliseconds. Then, some ports should be open.
+
+TCP 2377 --> Cluster management
+
+TCP 7946 and UDP 7946 --> Communication between nodes
+
+UDP --> Overlay Network
+
+24) Let's imagine 4 servers exist in a network. Docker engine is installed in these 4 servers. This is called cluster. They are connected to each other. ```docker swarm init``` command is run in one server and that server became the manager. The other 3 servers were connected to this manager and these 3 servers became workers. After we configure servers, they are ready to serve. Manager manages and tracks this cluster. ETCD is installed in manager node and it can be thought as certificate authority. ETCD is an open source key value storage. The communication is carried in with TLS protocol. We don't have to deal with all of these. Docker swarm is carrying out these things. Managers are workers by default, which means containers are able to run on managers but it isn't advised for production environments.
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/08_docker_swarm.png)
+
+
+25) Go to play with docker. Create 5 instances.
+
+```
+# To make an engine swarm manager with its IP
+docker swarm init --advertise-addr 192.168.0.13
+# To add a 2nd 3rd manager to a cluster, run the following on 1st manager and then run its output on 2nd and 3rd manager
+docker swarm join-token manager
+# To add a worker to a cluster, run the following on 1st manager and then run its output on worker server
+docker swarm join-token worker
+```
+
+26) To list nodes in the cluster, run the following on a Leader manager.
+
+```
+docker node ls
+```
+
+27) To create 5 containers from nginx image
+
+```
+docker service create --name NAME_OF_SERVICE --replicas=5 -p 8080:80 nginx
+```
+
+28) To track a service via its name
+
+```
+docker service ps NAME_OF_SERVICE
+```
+
+### Docker Service
+
+29) Docker Service is used in Docker Swarm Cluster. Docker Service can be thought as docker container of Docker Swarm.
+
+30) Imperative state is old-technology in IT operations. We run the commands and wait them to happen. If it gives any error, we correct it and re-run. Declarative state is just to define commands and the system monitors them. Docker Swarm & Kubernetes are using declerative state.
+
+37) Docker service has 2 modes: Replicated & Global. Replicated means how many replicates to create. Default mode is replicated. Global means 1 replicate on a node in a cluster. In global mode, if there exists 3 nodes, 3 containers were created.
+
+38) After creating cluster with manager and workers, all of our commands(docker service related commands) should be run in manager node.
+
+39) To create a service Docker Swarm(Its parameters are almost the same as docker container run)
+
+```
+docker service create --name NAME_OF_SERVICE IMAGE_NAME
+```
+
+40) Task in Docker Swarm can be thought as a inter-layer. However, to keep it simple, we consider it as container.
+
+41)  One service may have 20 containers. It is possible.
+
+42) To check status of services
+
+```
+docker service ps NAME_OF_SERVICE
+```
+
+43) To see details of a running service
+
+```
+docker service inspect NAME_OF_SERVICE
+```
+
+44) When we run ```docker service create``` command, it became a desired state.
+
+45) To see logs of a service
+
+```
+docker service logs NAME_OF_SERVICE
+```
+
+46) To scale a service(It may be up or down)
+
+```
+docker service scale NAME_OF_SERVICE=3
+```
+
+47) To delete a service
+
+```
+docker service rm NAME_OF_SERVICE
+```
+
+48) To create a gloval service
+
+```
+docker service create --name NAME_OF_GLOBAL_SERVICE --mode=global nginx
+```
+
+### Overlay Network
+
+49) Overlay is a driver like bridge or Mac based Vlan
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/09_overlay_network.png)
+
+50) A simulation for Overlay Network and Docker Swarm
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/10_overlay_network2.png)
+
+51) Docker swarm has a default overlay network called ingress unless we say something different.
+
+52) We are also capable of defining user defined bridge networks.
+
+53) If 2 services were created under same overlay network in Docker Swarm, ther are able to communicate between each other via their names. They resolve each other via their names.
+
+54) Go to play with docker. Create 5 instances. 3 instances are managers. 2 instances are workers. RUn ```docker network ls```. It prints 5 networks. 3 of them are known by default. 2 of them (docker_gwbridge, ingress ) come with Docker Swarm. docker_gwbridge is local bridge network. It enables user defined overlay networks (ingress here) to communicate with network hardware of the computer. docker_gwbridge can be considered as bridge network of the cluster.
+
+55) When we create a service, that service will connect to an overlay network named ingress by default. Bridge network is valid for containers of one computer. Overlay network is valid for all cluster.
+
+56) To create an overlay network on Docker Swarm
+
+```
+#1) create an overlay network
+docker network create -d overlay NETWORK_NAME
+
+#2) Create 1st service
+docker service create --name websrv --network NETWORK_NAME -p 8080:80 --replicas=3 ozgurozturknet/web
+
+#3) Create 2nd service
+docker service create --name db --network NETWORK_NAME ozgurozturknet/fakedb
+
+```
+
+57) Swarm Routing Match: When we create a service and publish a port, this port is published over all nodes of a cluster. Even if the node doesn't have that 
+container, it sends the request taken to any node.
+
+58) Services provides DNS service and Load Balancing service. 
+
+59) Docker Swarm enables us to update services. Tihs operation is callled service update. Docker Swarm carries out this using ```docker service update``` command. If there exists any error in newer version, we are making rollback. To update the version of a container
+
+```
+# First version creation
+docker service create --name SERVICE_NAME --network NETWORK_NAME -p 8080:80 --replicas=3 ozgurozturknet/web:v1
+
+# Second version
+docker service update --detach --update-delay 5s --update-parallelism 2 --image ozgurozturknek/web:v2 SERVICE_NAME
+
+```
+
+60) To roll back a newer version of a software
+
+```
+docker service rollback --detach SERVICE_NAME
+```
+
+### Docker Secret
+
+61) Docker Secret is a Docker object that creates encrypted usernames and passwords instead of plain text. In order to use docker secret, we have to enable docker swarm.
+
+62) 2 ways to create Docker secret: 1) From a file 2) Using CLI
+
+```
+# 1) From a file
+echo "MY_USERNAME" > username.txt
+echo "MY_PASSWORD" > password.txt
+docker secret create SECRETOBJECT_FOR_USERNAME username.txt
+docker secret create SECRETOBJECT_FOR_PASSWORD password.txt
+
+# 2) Using CLI
+echo "MY_USERNAME" | docker secret create SECRETOBJECT_FOR_USERNAME -
+echo "MY_PASSWORD" | docker secret create SECRETOBJECT_FOR_PASSWORD -
+
+```
+
+63) To list secret objects
+
+```
+docker secret ls
+```
+
+64) To create a service object using a secret
+
+```
+docker service create -d --name SERVICE_NAME --secret SECRETOBJECT_FOR_USERNAME --secret SECRETOBJECT_FOR_PASSWORD IMAGE_NAME
+```
+
+65) After we create a secret and assign it to a service, secrets folder exist under /run directory.
+
+66) Docker secrets aren't changed. If we want to update a docker secret, we should create a new docker secret object and then run the following:
+
+```
+docker service update --secret-rm NAME_OF_OLD_SECRET --secret-add NAME_OF_NEW_SECRET SERVICE_NAME
+```
+
+67) To hide the value of an EV using secret
+
+![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/11_hide_EV.png)
+
+### Docker Stack
+
+68) Docker Stack can be thought of Docker Compose of Docker Swarm. One stack may have many services.
+
+69) We can use our Docker-compose.yaml files in Docker Stack if their version >= 3.0
+
+70) Images should have been craeted and uploaded into an image registry system. Therefore, there is no build lin in docker-compose.yaml file.
+
+71) There may be a **deploy** line in docker-compose file for docker stack.
+
+72) A ready-to-run yaml file is under workspaces/11_docker_stack
+
+```
+docker stack deploy -c docker-compose.yaml STACK_NAME_TO_CREATE
+```
+
+73) To list stacks
+
+```
+docker stack ls
+```
+
+74) To list services of a stack
+
+```
+docker stack services STACK_NAME_TO_CREATE
+```
+
+75) To remove a stack
+
+```
+docke stack rm STACK_NAME_TO_CREATE
+```
+
+## Extras
+
+### Windows Containers
+
+1) Docker CE doesn't support Windows containers. Docker EE only supports Windows containers.
+
+2) It isn't available for Linux and Mac OS X.
+
+
 
 
 
