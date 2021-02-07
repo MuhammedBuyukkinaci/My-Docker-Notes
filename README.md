@@ -1,6 +1,8 @@
 # My-Docker-Notes
 Including My Docker Notes
 
+This is a repository which summarizes What I learned from [this course (Docker A-Z) on Udemy](https://www.udemy.com/course/adan-zye-docker/).
+
 ## Introduction to Docker
 
 1) Computer = CPU + RAM + Motherboard + Hard disc
