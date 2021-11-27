@@ -1082,6 +1082,46 @@ docke stack rm STACK_NAME_TO_CREATE
 
 2) It isn't available for Linux and Mac OS X.
 
+## Dumping And Restoring in Docker Postgresql
+
+1) To dump a docker postgresql container to .sql file
+
+```
+docker exec -t MY_FIRST_DB pg_dumpall -c -U USERNAME > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
+```
+
+2) To dump a database in docker container
+
+```
+docker exec -i CONTAINER_NAME /usr/bin/pg_dump -U USERNAME DB_NAME > FILENAME.sql 
+```
+
+3) To create a docker volume
+
+```
+docker volume create VOLUME_NAME
+```
+
+4) To create a postgresql container
+```
+docker run -it -d --name=CONTAINER_NAME -p PORT_IN_HOST:PORT_IN_CONTAINER -e POSTGRES_PASSWORD=PASSWORD_HERE -e POSTGRES_DB=DBNAME_HERE -e POSTGRES_USER=USERNAME_HERE --mount source=VOLUME_NAME_TO_MOUNT,destination=/data postgres:latest
+```
+
+5) To inspect volumes of a container created
+```
+docker inspect -f '{{ json .Mounts }}' CONTAINER_NAME | python3 -m json.tool
+```
+
+6) To copy a file from host to container
+```
+docker cp mydump.sql my_postgres:/WHERE/TO/LOCATE
+```
+
+7) To restore a database from a dumped file
+
+```
+docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCATE/FILENAME.sql"
+```
 
 
 
