@@ -205,6 +205,11 @@ docker container rm 12_digit_container_id
 ```
 
 ```
+# To remove its affiliated volume by forcing
+docker container rm -v -f 12_digit_container_id
+```
+
+```
 # To delete all containers in the system
 docker container prune
 ```
@@ -656,7 +661,11 @@ docker image inspect IMAGE_NAME
 
 ![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/05_ADD_COPY_DIFF.png)
 
+39.5) CMD is used to specify what the container should run when it starts.
+
 40) If we don't specify an app while creating the container, the line in CMD will run. ENTRYPOINT is the same as CMD. The only difference is that ENTRYPOINT can't be changed with ```docker run``` command. In every Dockerfile, there must be either a CMD or ENTRYPOINT. If both CMD and ENTRYPONT exist in a Dockerfile, Docker adds content of CMD to ENTRYPOINT as a parameter. The purpose of using CMD and ENTRYPOINT together is to facilitate versioning problems.
+
+40.5) The ENTRYPOINT specifies a command that will always be executed when the container starts. The CMD specifies arguments that will be fed to the ENTRYPOINT.
 
 41) Exec form is the former. Shell form is the latter. Exec form means run the content as it is but Shell form means open up a shell and run the content. If we are using CMD and ENTRYPOINT together, we couldn't use Shell form. Thus, we have to use Exec form.
 
@@ -668,6 +677,8 @@ CMD java app1
 
 ```
 ![Docker Image](https://github.com/MuhammedBuyukkinaci/My-Docker-Notes/blob/master/img/06_exec_shell.png)
+
+41.5) For ENTRYPOINT, it is advised to use EXEC form.
 
 ### MultiStage Build
 
@@ -764,6 +775,8 @@ docker image push 127.0.0.1:5000/hello-app:latest
 1) Docker compose can be regarded as skeleton of Docker.
 
 2) In real life cases, one application has many services and many containers needed to run a single application. For docker compose, service=container
+
+2.5) If there exists 2 services on a docker-compose file and we make it `up`, one container for each service is created. However, thanks to docker-compose, we can 5 containers for one of services and 2 containers for the other service(From [here](https://stackoverflow.com/questions/35565770/difference-between-service-and-container-in-docker-compose#:~:text=Services%20and%20container%20are%20related,compose%20you%20can%20handle%20services.&text=This%20compose%20file%20defines%20two%20services%2C%20web%20and%20db%20.))  
 
 3) Docker compose is a tool to define and run multiple Docker objects. To use Docker Compose, a YAML file is used and all services were created using one command. Docker compose creates services(containers), networks and volumes.
 
@@ -1076,13 +1089,21 @@ docke stack rm STACK_NAME_TO_CREATE
 
 ## Extras
 
+### Docker Entrypoint
+
+1) Docker entrypoint can be overridden like below. The ENTRYPOINT command in Dockerfile is going to be ignored and a shell session will be prompted thanks to `/bin/sh`.
+
+```
+docker run --entrypoint /bin/sh my-image
+```
+
 ### Windows Containers
 
 1) Docker CE doesn't support Windows containers. Docker EE only supports Windows containers.
 
 2) It isn't available for Linux and Mac OS X.
 
-## Dumping And Restoring in Docker Postgresql
+### Dumping And Restoring in Docker Postgresql
 
 1) To dump a docker postgresql container to .sql file
 
