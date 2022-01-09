@@ -831,6 +831,17 @@ docker-compose exec websrv ls -al
 
 15) depends_on: is used in creating a YAML file. DB should start firstly and app should start later.
 
+15.5) An example of environment variables on docker-compose.yaml via environment or env_file is below.
+
+```
+service_name:
+  container_name: my_django
+  environment:
+    DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  env_file:
+    - ./.env
+```
+
 16)  First network --> Second volume --> Third Services executed in YAML
 
 ### Docker Compose Build
