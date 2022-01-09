@@ -799,6 +799,8 @@ docker-compose down
 
 8) Docker compose componenets: CLI & yaml file.
 
+8.5) `docker-compose build` is just creating the image. `docker-compose up` is creating the image if not created and starting a new container.
+
 #### Docker CLI
 
 9) Naming procedure of Docker CLI is FOLDERNAME_SERVICENAME
@@ -845,6 +847,8 @@ docker-compose build
 # Re-run compose 
 docker-compose up -d
 ```
+
+19.5) ports and expose are 2 similar commands in docker-compose but different. ports are maping a port from host machine to a port on container but expose is publishing a port on container to other services in the yaml file. For example, we should make `expose` operation for the service of Django app and we should make `ports` operation for the service of Nginx. For more details, check [here](https://stackoverflow.com/questions/40801772/what-is-the-difference-between-docker-compose-ports-vs-expose).
 
 ### Container Orchestration
 
