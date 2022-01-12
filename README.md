@@ -844,6 +844,15 @@ service_name:
 
 16)  First network --> Second volume --> Third Services executed in YAML
 
+16.5) The below section of docker-compose means that docker container isn't able to edit the volume which was mapped. It can only read it, which is read-only.
+
+```
+services:
+  service_name:
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+```
+
 ### Docker Compose Build
 
 17) Most people don't use docker compose build but it was used in Test environments. Docker Compose Build means to create Docker image in YAML file using Dockerfile. Look at workspaces/10_docker_compose_build
