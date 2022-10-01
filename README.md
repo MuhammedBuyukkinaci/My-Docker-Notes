@@ -1170,7 +1170,7 @@ docker cp mydump.sql my_postgres:/WHERE/TO/LOCATE
 docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCATE/FILENAME.sql"
 ```
 
-
+8) When we define a volume section in our `docker-compose.yaml` file and map our local file system to container's folder, our development time may decrease. When we made a change in our code base, the change will be also effective in container's file system and the code in container will also change. After changes in container's codebase, `command` flag of `docker-compose.yaml` file should reload the running application. Our modifications will be active in the container too.
 
 
 
