@@ -765,6 +765,8 @@ docker image push 127.0.0.1:5000/hello-app:latest
 
 50) To list images in LAN, open up a browser and enter the url 127.0.0.1:5000/v2/_catalog
 
+51) While dockerizing a python application, copy requirements.txt file firstly. Install requirements via pip secondly. Copy other components of code into image thirdly. In this way, we don't have to wait too much if we made a change in our codebase.
+
 ## Compose & Swarm
 
 ### Docker Compose
@@ -1167,7 +1169,6 @@ docker cp mydump.sql my_postgres:/WHERE/TO/LOCATE
 ```
 docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCATE/FILENAME.sql"
 ```
-
 
 
 
