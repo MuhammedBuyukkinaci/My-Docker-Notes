@@ -769,6 +769,8 @@ docker image push 127.0.0.1:5000/hello-app:latest
 
 52) In M1 Macbooks, the CPU architecture is arm64 rather than linux/amd64. Therefore, `docker build` command fails. Use something similar to below command to create a docker image in a new Mac M1 pro.
 
+53) While installing python libraries via pip, use `pip install --no-cache-dir` to reduce Docker image size.
+
 ```
 docker build --platform linux/amd64 -t TAG_NAME .
 ```
