@@ -1180,13 +1180,9 @@ docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCA
 
 8) When we define a volume section in our `docker-compose.yaml` file and map our local file system to container's folder, our development time may decrease. When we made a change in our code base, the change will be also effective in container's file system and the code in container will also change. After changes in container's codebase, `command` flag of `docker-compose.yaml` file should reload the running application. Our modifications will be active in the container too.
 
+9) The difference between busybox and Alpine Linux. The comment taken from here[https://www.reddit.com/r/docker/comments/m9l5k2/noob_question_what_is_the_difference_between/].
 
+- Busybox is a minimal set of tools typically present in a unix-like operating system. It does not contain a kernel and is not an operating system.
 
-
-
-
-
-
-
-
+- Alpine Linux is a minimal Linux distribution that contains everything necessary to boot a kernel and initiate a session.
 
