@@ -1186,3 +1186,6 @@ docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCA
 
 - Alpine Linux is a minimal Linux distribution that contains everything necessary to boot a kernel and initiate a session.
 
+10) [wenight/funbox](https://hub.docker.com/r/wernight/funbox) is a docker image that prompts funny things on Terminal.
+
+
