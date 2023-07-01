@@ -1188,4 +1188,18 @@ docker exec -t my_postgres bash -c "psql -U USERNAME -d DBNAME -f /WHERE/TO/LOCA
 
 10) [wenight/funbox](https://hub.docker.com/r/wernight/funbox) is a docker image that prompts funny things on Terminal.
 
+11) Hadolint is a linter for Dockerfiles. AN example command is below:
+
+```shell
+docker run --rm -i hadolint/hadolint < Dockerfile
+```
+
+12) Common Vulnerabilities and Exposures is a concept meaning a mistake or failure exists inside a program. For instance, Python's Flask library has 5 dependencies. grype is a programme that detects vulnarabilities on an docker image. To install it, run `curl -sSfL \
+ https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s`. Some usage examples are
+ 
+```
+grype python3:8
+grype python:3.8 | grep High
+grype --fail-on=high centos:8
+```
 
