@@ -801,7 +801,7 @@ docker build --platform linux/amd64 -t TAG_NAME .
 ```
 # Up
 docker-compose up
-# Detacked up
+# Detached up
 docker-compose up -d
 # Down, opposite of down
 docker-compose down
@@ -880,6 +880,8 @@ docker-compose up -d
 
 19.5) ports and expose are 2 similar commands in docker-compose but different. ports are maping a port from host machine to a port on container but expose is publishing a port on container to other services in the yaml file. For example, we should make `expose` operation for the service of Django app and we should make `ports` operation for the service of Nginx. For more details, check [here](https://stackoverflow.com/questions/40801772/what-is-the-difference-between-docker-compose-ports-vs-expose).
 
+19.6) `docker-compose up` has useful parameters such as `no-deps`, which only run a service in a docker-compose.yaml file. In addition,`--scale` increases the number of containers to the set number, which is 1 by default. 
+
 ### Container Orchestration
 
 20) This concept is used to monitor hundreds of containers in prod environment.
@@ -929,6 +931,8 @@ docker service create --name NAME_OF_SERVICE --replicas=5 -p 8080:80 nginx
 ```
 docker service ps NAME_OF_SERVICE
 ```
+
+29) Services under a docker-compose file run on the same network. It is more plausible to run backend and database services in the same network thanks to docker compose.
 
 ### Docker Service
 
